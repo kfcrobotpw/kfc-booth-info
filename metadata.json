@@ -1,0 +1,6 @@
+{
+  "name": "K.F.C. 로봇동아리 부스 운영 관제 시스템",
+  "description": "용인시청소년수련관 소속 로봇동아리 K.F.C.의 축제 부스 운영, 인원 및 소팀 편성, 웹앱·로봇 관리, 드래그 앤 드롭 부스 배치도 시뮬레이터 통합 플랫폼",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
