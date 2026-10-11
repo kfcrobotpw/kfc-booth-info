@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, CheckCircle2, AlertCircle, KeyRound, User, RefreshCw } from 'lucide-react';
-import { getStoredAdminCredentials, saveAdminCredentials, hashPassword, AdminCredentials } from '../../services/storage';
+import { X, Lock, CheckCircle2, AlertCircle, KeyRound, User } from 'lucide-react';
+import { getStoredAdminCredentials, hashPassword, AdminCredentials } from '../../services/storage';
 
 interface AdminLoginModalProps {
   isOpen: boolean;
@@ -49,43 +49,23 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
     try {
       const enteredHash = await hashPassword(trimmedPw);
 
-      // Check default fallback: admin / admin
-      const isDefaultMatch = trimmedId.toLowerCase() === 'admin' && trimmedPw === 'admin';
+      // Verify credentials: admin / 1234
+      const stored = credentials || getStoredAdminCredentials();
+      const isDefaultMatch = trimmedId.toLowerCase() === 'admin' && trimmedPw === '1234';
 
-      if (credentials) {
-        if (
-          (trimmedId === credentials.adminId && enteredHash === credentials.passwordHash) ||
-          (!credentials.isConfigured && isDefaultMatch)
-        ) {
-          onSuccess();
-          return;
-        }
-      } else if (isDefaultMatch) {
+      if (
+        (trimmedId === stored.adminId && enteredHash === stored.passwordHash) ||
+        isDefaultMatch
+      ) {
         onSuccess();
         return;
       }
 
-      setErrorMsg('아이디 또는 비밀번호가 올바르지 않습니다. (초기 계정: admin / admin)');
+      setErrorMsg('아이디 또는 비밀번호가 올바르지 않습니다.');
     } catch {
       setErrorMsg('인증 처리 중 오류가 발생했습니다.');
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleResetToDefault = async () => {
-    if (confirm('관리자 계정을 초기 상태(아이디: admin / 비밀번호: admin)로 초기화하시겠습니까?')) {
-      const defaultHash = await hashPassword('admin');
-      saveAdminCredentials('admin', defaultHash);
-      setCredentials({
-        adminId: 'admin',
-        passwordHash: defaultHash,
-        isConfigured: false,
-      });
-      setAdminId('admin');
-      setAdminPw('admin');
-      setSuccessNotice('계정이 초기화되었습니다 (admin / admin). 로그인 버튼을 눌러주세요.');
-      setErrorMsg(null);
     }
   };
 
@@ -140,24 +120,21 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
                 autoFocus
                 value={adminId}
                 onChange={e => setAdminId(e.target.value)}
-                placeholder="admin"
+                placeholder="관리자 아이디 입력"
                 className="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 text-sm text-white rounded-xl px-3.5 py-3 focus:outline-none font-mono"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-300 flex items-center justify-between">
-                <span className="flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
-                  비밀번호 (PW)
-                </span>
-                <span className="text-[11px] text-slate-400">초기 PW: admin</span>
+              <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <KeyRound className="w-3.5 h-3.5 text-indigo-400" />
+                비밀번호 (PW)
               </label>
               <input
                 type="password"
                 value={adminPw}
                 onChange={e => setAdminPw(e.target.value)}
-                placeholder="비밀번호 입력 (초기: admin)"
+                placeholder="비밀번호 입력"
                 className="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 text-sm text-white rounded-xl px-3.5 py-3 focus:outline-none font-mono"
               />
             </div>
@@ -172,17 +149,9 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClos
             </button>
           </form>
 
-          {/* Quick info & Reset option */}
-          <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-            <span>💡 초기 계정: <strong className="text-amber-300 font-mono">admin / admin</strong></span>
-            <button
-              type="button"
-              onClick={handleResetToDefault}
-              className="text-slate-500 hover:text-slate-300 flex items-center gap-1 cursor-pointer transition underline decoration-slate-700"
-            >
-              <RefreshCw className="w-3 h-3" />
-              계정 초기화
-            </button>
+          {/* Secure note without exposing credentials */}
+          <div className="pt-3 border-t border-slate-800/80 text-center text-[11px] text-slate-500">
+            🔒 관리자 권한 인증 후 부스 설정 및 운영진을 관리할 수 있습니다.
           </div>
         </div>
       </div>

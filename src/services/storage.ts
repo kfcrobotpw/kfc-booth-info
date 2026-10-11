@@ -21,11 +21,6 @@ try {
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
     if (k && staleKeywords.some(w => k.includes(w))) {
-      // Preserve custom admin password if set
-      if (k.includes('admin_vault') && !localStorage.getItem(STORAGE_KEYS.ADMIN_VAULT)) {
-        const val = localStorage.getItem(k);
-        if (val) localStorage.setItem(STORAGE_KEYS.ADMIN_VAULT, val);
-      }
       keysToRemove.push(k);
     }
   }
@@ -117,21 +112,30 @@ export interface AdminCredentials {
   updatedAt?: string;
 }
 
+export const ADMIN_DEFAULT_HASH = '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4'; // SHA-256 for '1234'
+
 export const getStoredAdminCredentials = (): AdminCredentials => {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.ADMIN_VAULT);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (parsed && parsed.adminId) return parsed;
+      if (parsed && parsed.adminId) {
+        // If it was stored with the legacy test password hash, ensure it's updated to 1234
+        if (parsed.passwordHash === '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918') {
+          parsed.passwordHash = ADMIN_DEFAULT_HASH;
+          localStorage.setItem(STORAGE_KEYS.ADMIN_VAULT, JSON.stringify(parsed));
+        }
+        return parsed;
+      }
     }
   } catch {
     // Ignore
   }
-  // Default admin credentials: admin / admin (SHA-256)
+  // Fixed Admin account: admin / 1234 (SHA-256)
   return {
     adminId: 'admin',
-    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
-    isConfigured: false,
+    passwordHash: ADMIN_DEFAULT_HASH,
+    isConfigured: true,
   };
 };
 
