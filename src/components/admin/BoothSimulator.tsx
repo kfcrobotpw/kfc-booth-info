@@ -59,7 +59,7 @@ export const BoothSimulator: React.FC<BoothSimulatorProps> = ({ festival, onSave
   // Sync when festival layout changes externally
   useEffect(() => {
     setItems(festival.layoutItems || []);
-  }, [festival.id]);
+  }, [festival.id, festival.layoutItems]);
 
   const selectedItem = items.find(i => i.id === selectedId);
 

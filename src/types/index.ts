@@ -88,6 +88,48 @@ export interface Member {
   bio?: string;
   isLeader?: boolean;
   avatarColor: string;
+  accessCode: string; // 단순 부스 운영자 접속 코드 (예: KFC-29, ROBO-12)
+}
+
+export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
+
+export interface RobotDeploymentRequest {
+  id: string;
+  festivalId?: string;
+  applicantMemberId: string;
+  applicantName: string;
+  applicantCode?: string;
+  robotName: string;
+  category: RobotCategory;
+  description: string;
+  specs: string;
+  batteryType?: string;
+  operatingVoltage?: string;
+  controllerMethod?: string;
+  demonstrationScenario?: string;
+  safetyNotes: string;
+  status: ApprovalStatus;
+  rejectionReason?: string;
+  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+}
+
+export interface WebAppIdeaRequest {
+  id: string;
+  applicantMemberId: string;
+  applicantName: string;
+  applicantCode?: string;
+  title: string;
+  category: WebAppCategory;
+  summary: string;
+  description: string;
+  features: string[];
+  boothBenefit: string;
+  status: ApprovalStatus;
+  rejectionReason?: string;
+  createdAt: string;
+  reviewedAt?: string;
 }
 
 export type RobotCategory = 'quadruped' | 'mobile_wheeled' | 'robotic_arm' | 'autonomous' | 'combat';

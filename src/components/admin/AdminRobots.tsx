@@ -40,16 +40,16 @@ export const AdminRobots: React.FC<AdminRobotsProps> = ({
     setName('');
     setCodeName('');
     setCategory('mobile_wheeled');
-    setDescription('부스에서 관람객들이 직접 조종 체험할 수 있는 로봇입니다.');
-    setSpecs('메탈 서보모터, 아두이노/ESP32, 무선 통신 모듈');
-    setDemonstrationScenario('장애물 코스 통과 및 미션 수행 시연');
-    setBatteryType('3S LiPo 11.1V');
-    setOperatingVoltage('11.1V');
-    setControllerMethod('스마트폰 웹 브라우저 터치 컨트롤러');
-    setSafetyNotes('급발진 방지 및 관람객 손끼임 주의');
+    setDescription('');
+    setSpecs('');
+    setDemonstrationScenario('');
+    setBatteryType('');
+    setOperatingVoltage('');
+    setControllerMethod('');
+    setSafetyNotes('');
     setPrimaryPilotId(members[0]?.id || '');
     setStatus('ready');
-    setTagsStr('체험로봇, K.F.C.자체제작');
+    setTagsStr('');
     setIsModalOpen(true);
   };
 

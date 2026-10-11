@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Festivals
+    match /festivals/{festivalId} {
+      allow read, write: if true;
+    }
+
+    // 2. Members
+    match /members/{memberId} {
+      allow read, write: if true;
+    }
+
+    // 3. Robots
+    match /robots/{robotId} {
+      allow read, write: if true;
+    }
+
+    // 4. WebApps
+    match /webApps/{appId} {
+      allow read, write: if true;
+    }
+
+    // 5. App State (Active festival sync)
+    match /app_state/{stateId} {
+      allow read, write: if true;
+    }
+
+    // 6. Robot Deployment Requests
+    match /robot_requests/{requestId} {
+      allow read, write: if true;
+    }
+
+    // 7. WebApp Idea Requests
+    match /webapp_requests/{requestId} {
+      allow read, write: if true;
+    }
+
+    // 8. Cheers & Queues (legacy safe)
+    match /cheers/{cheerId} {
+      allow read, write: if true;
+    }
+    match /queues/{queueId} {
+      allow read, write: if true;
+    }
+
+    // 9. Test connection
+    match /test/{docId} {
+      allow read, write: if true;
+    }
+
+    // 10. Catch-all default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

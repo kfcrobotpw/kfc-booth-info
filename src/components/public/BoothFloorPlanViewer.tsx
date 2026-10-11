@@ -4,15 +4,23 @@ import { Move, Info, Eye, Layers, Shield, Zap, Sparkles, User, Bot, HelpCircle }
 
 interface BoothFloorPlanViewerProps {
   festival: Festival;
-  onOpenAdminMode?: () => void;
 }
 
 export const BoothFloorPlanViewer: React.FC<BoothFloorPlanViewerProps> = ({
   festival,
-  onOpenAdminMode,
 }) => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [selectedZoneFilter, setSelectedZoneFilter] = useState<string>('all');
+
+  if (!festival) {
+    return (
+      <div className="text-center py-20 rounded-2xl bg-slate-900/50 border border-slate-800 p-8 space-y-3">
+        <Move className="w-12 h-12 text-slate-500 mx-auto" />
+        <h3 className="text-base font-bold text-white">선택된 축제가 없습니다</h3>
+        <p className="text-xs text-slate-400">축제를 등록하거나 선택해 주세요.</p>
+      </div>
+    );
+  }
 
   const items = festival.layoutItems || [];
   const selectedItem = items.find(i => i.id === selectedItemId);
@@ -31,7 +39,7 @@ export const BoothFloorPlanViewer: React.FC<BoothFloorPlanViewerProps> = ({
             부스 실시간 배치도 및 위치 안내
           </h2>
           <p className="text-xs text-slate-400 mt-1">
-            {festival.name} ({festival.boothNumber}) 부스의 가로 {festival.boothDimensions.widthMeters}m × 세로 {festival.boothDimensions.depthMeters}m 몽골텐트 내부 배치도입니다.
+            {festival.name} {festival.boothNumber && `(${festival.boothNumber})`} 부스의 가로 {festival.boothDimensions?.widthMeters || 5}m × 세로 {festival.boothDimensions?.depthMeters || 5}m 몽골텐트 내부 배치도입니다.
             각 집기를 클릭하면 담당 스태프와 운영 로봇 정보를 확인할 수 있습니다.
           </p>
         </div>
@@ -92,6 +100,15 @@ export const BoothFloorPlanViewer: React.FC<BoothFloorPlanViewerProps> = ({
             </div>
 
             {/* Render Placed Items */}
+            {filteredItems.length === 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center text-slate-500 z-10">
+                <Layers className="w-10 h-10 mb-2 opacity-40 text-slate-400" />
+                <p className="text-xs font-semibold text-slate-300">배치된 집기가 없습니다</p>
+                <p className="text-[11px] text-slate-400 mt-1 max-w-xs">
+                  현장 운영 배치도가 확정되면 실시간 평면 뷰로 제공됩니다.
+                </p>
+              </div>
+            )}
             {filteredItems.map(item => {
               const isSelected = item.id === selectedItemId;
               return (
@@ -145,14 +162,6 @@ export const BoothFloorPlanViewer: React.FC<BoothFloorPlanViewerProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> 배터리/안전
               </span>
             </div>
-            {onOpenAdminMode && (
-              <button
-                onClick={onOpenAdminMode}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold"
-              >
-                관리자 모드에서 배치도 수정하기 →
-              </button>
-            )}
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Member, Festival, SubTeam } from '../../types';
-import { Users, Plus, Edit2, Trash2, Shield, Phone, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Shield, Phone, Sparkles, Check, ArrowRight, Key, Copy, RefreshCw } from 'lucide-react';
+import { generateOperatorCode } from '../../services/storage';
 
 interface AdminMembersProps {
   members: Member[];
@@ -21,6 +22,7 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingMember, setEditingMember] = useState<Member | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Form State
   const [name, setName] = useState<string>('');
@@ -30,16 +32,33 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
   const [phone, setPhone] = useState<string>('010-0000-0000');
   const [emergency, setEmergency] = useState<string>('010-0000-0000 (학부모)');
   const [bio, setBio] = useState<string>('K.F.C. 부스에서 열정적으로 활동하겠습니다!');
+  const [accessCode, setAccessCode] = useState<string>('');
+
+  const handleCopyCode = (id: string, code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedId(id);
+    setTimeout(() => {
+      setCopiedId(null);
+    }, 2000);
+  };
+
+  const handleRegenerateCode = () => {
+    const existingCodes = members.map(m => m.accessCode);
+    const newCode = generateOperatorCode(existingCodes);
+    setAccessCode(newCode);
+  };
 
   const openAddModal = () => {
     setEditingMember(null);
     setName('');
     setGrade('고등학교 1학년');
-    setRole('로봇 조종 파일럿 & 체험 지도');
-    setSkillsStr('아두이노, 3D 프린팅, 로봇 조작');
-    setPhone('010-');
-    setEmergency('010- (학부모)');
-    setBio('부스 관람객들에게 로봇의 매력을 알리겠습니다.');
+    setRole('');
+    setSkillsStr('');
+    setPhone('');
+    setEmergency('');
+    setBio('');
+    const existingCodes = members.map(m => m.accessCode);
+    setAccessCode(generateOperatorCode(existingCodes));
     setIsModalOpen(true);
   };
 
@@ -52,6 +71,7 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
     setPhone(mem.phone);
     setEmergency(mem.emergencyContact);
     setBio(mem.bio || '');
+    setAccessCode(mem.accessCode || generateOperatorCode(members.map(m => m.accessCode)));
     setIsModalOpen(true);
   };
 
@@ -73,6 +93,7 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
       'from-cyan-500 to-blue-600',
     ];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const finalCode = (accessCode.trim() || generateOperatorCode(members.map(m => m.accessCode))).toUpperCase();
 
     if (editingMember) {
       const updated: Member = {
@@ -84,6 +105,7 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
         phone: phone.trim(),
         emergencyContact: emergency.trim(),
         bio: bio.trim(),
+        accessCode: finalCode,
       };
       onUpdateMember(updated);
     } else {
@@ -97,6 +119,7 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
         emergencyContact: emergency.trim(),
         bio: bio.trim(),
         avatarColor: randomColor,
+        accessCode: finalCode,
       };
       onAddMember(newMem);
     }
@@ -256,6 +279,35 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
                   </div>
                 </div>
 
+                {/* Operator Access Code Badge */}
+                <div className="flex items-center justify-between p-2 rounded-lg bg-indigo-950/60 border border-indigo-500/30 mb-2.5">
+                  <div className="flex items-center gap-1.5 overflow-hidden">
+                    <Key className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span className="text-[11px] text-slate-300 font-medium">부스 접속 코드:</span>
+                    <span className="text-xs font-mono font-black text-amber-300 bg-slate-950/80 px-2 py-0.5 rounded border border-amber-500/30 tracking-wider">
+                      {member.accessCode || '미발급'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleCopyCode(member.id, member.accessCode)}
+                    className="px-2 py-1 rounded-md bg-indigo-600/40 hover:bg-indigo-600/60 active:scale-95 text-indigo-200 text-[10px] font-semibold border border-indigo-400/30 flex items-center gap-1 transition cursor-pointer shrink-0"
+                    title="접속 코드 클립보드 복사"
+                  >
+                    {copiedId === member.id ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-400" />
+                        <span className="text-emerald-300">복사됨!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3 text-indigo-300" />
+                        <span>코드 복사</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
                 <div className="flex flex-wrap gap-1 mb-2">
                   {member.skills.map((sk, idx) => (
                     <span
@@ -391,6 +443,33 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
                     className="w-full bg-slate-950 border border-slate-700 text-xs text-white rounded-lg px-3 py-2 focus:outline-none"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1.5 p-3 rounded-xl bg-slate-950/80 border border-indigo-500/30">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Key className="w-3.5 h-3.5 text-amber-400" />
+                    부스 운영자 전용 접속 코드 *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleRegenerateCode}
+                    className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer font-medium"
+                  >
+                    <RefreshCw className="w-3 h-3" /> 새 코드 랜덤 생성
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  required
+                  placeholder="예: KFC-72B"
+                  value={accessCode}
+                  onChange={e => setAccessCode(e.target.value.toUpperCase())}
+                  className="w-full bg-slate-900 border border-slate-700 text-sm font-mono font-bold text-amber-300 rounded-lg px-3 py-2 focus:outline-none focus:border-indigo-500 tracking-wider uppercase"
+                />
+                <p className="text-[10px] text-slate-400">
+                  부스 운영자가 사이트에 접속 시 이 코드를 입력하면 개인 맞춤 홈 화면과 투입 신청 기능이 활성화됩니다.
+                </p>
               </div>
 
               <div className="space-y-1.5">

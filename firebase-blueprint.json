@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "Festival": {
+      "title": "Festival",
+      "description": "축제 부스 운영 정보 및 배치도 시뮬레이션 데이터",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "date": { "type": "string", "maxLength": 50 },
+        "timeRange": { "type": "string", "maxLength": 50 },
+        "location": { "type": "string", "maxLength": 100 },
+        "boothNumber": { "type": "string", "maxLength": 50 },
+        "theme": { "type": "string", "maxLength": 150 },
+        "status": { "type": "string", "enum": ["upcoming", "ongoing", "completed"] },
+        "boothDimensions": { "type": "object" },
+        "description": { "type": "string", "maxLength": 1000 },
+        "targetAudience": { "type": "string", "maxLength": 200 },
+        "assignedMemberIds": { "type": "array" },
+        "assignedRobotIds": { "type": "array" },
+        "assignedAppIds": { "type": "array" },
+        "subteams": { "type": "array" },
+        "layoutItems": { "type": "array" },
+        "timeline": { "type": "array" },
+        "safetyRules": { "type": "array" }
+      },
+      "required": ["id", "name", "status"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "로봇동아리 부원 정보",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 50 },
+        "grade": { "type": "string", "maxLength": 50 },
+        "role": { "type": "string", "maxLength": 100 },
+        "skills": { "type": "array" },
+        "phone": { "type": "string", "maxLength": 30 },
+        "emergencyContact": { "type": "string", "maxLength": 50 },
+        "bio": { "type": "string", "maxLength": 500 },
+        "isLeader": { "type": "boolean" },
+        "avatarColor": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "name", "role"]
+    },
+    "Robot": {
+      "title": "Robot",
+      "description": "시연 및 전시 로봇 정보",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "codeName": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string" },
+        "description": { "type": "string", "maxLength": 500 },
+        "specs": { "type": "string", "maxLength": 500 },
+        "demonstrationScenario": { "type": "string", "maxLength": 500 },
+        "batteryType": { "type": "string", "maxLength": 50 },
+        "operatingVoltage": { "type": "string", "maxLength": 50 },
+        "controllerMethod": { "type": "string", "maxLength": 100 },
+        "safetyNotes": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["ready", "maintenance", "testing"] },
+        "tags": { "type": "array" }
+      },
+      "required": ["id", "name", "category", "status"]
+    },
+    "WebAppIdea": {
+      "title": "WebAppIdea",
+      "description": "부스 운영 웹앱",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string" },
+        "summary": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 500 },
+        "features": { "type": "array" },
+        "devStatus": { "type": "string" },
+        "author": { "type": "string", "maxLength": 50 },
+        "boothBenefit": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["id", "title", "category"]
+    },
+    "Cheer": {
+      "title": "Cheer",
+      "description": "방문객 응원 방명록",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "author": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 300 },
+        "tag": { "type": "string", "maxLength": 50 },
+        "stars": { "type": "number" },
+        "timeAgo": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["id", "author", "message"]
+    },
+    "QueueState": {
+      "title": "QueueState",
+      "description": "실시간 대기열 번호표 상태",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "currentCalling": { "type": "number" },
+        "waitingList": { "type": "array" }
+      },
+      "required": ["id", "currentCalling"]
+    },
+    "AppState": {
+      "title": "AppState",
+      "description": "현재 활성화된 축제 ID",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "activeFestivalId": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "activeFestivalId"]
+    }
+  },
+  "firestore": {
+    "/festivals/{festivalId}": {
+      "schema": { "$ref": "#/entities/Festival" },
+      "description": "축제 부스 운영 정보 및 배치도"
+    },
+    "/members/{memberId}": {
+      "schema": { "$ref": "#/entities/Member" },
+      "description": "로봇동아리 부원 정보"
+    },
+    "/robots/{robotId}": {
+      "schema": { "$ref": "#/entities/Robot" },
+      "description": "시연 및 전시 로봇 정보"
+    },
+    "/webApps/{appId}": {
+      "schema": { "$ref": "#/entities/WebAppIdea" },
+      "description": "부스 운영 웹앱"
+    },
+    "/cheers/{cheerId}": {
+      "schema": { "$ref": "#/entities/Cheer" },
+      "description": "방문객 응원 방명록"
+    },
+    "/queues/{queueId}": {
+      "schema": { "$ref": "#/entities/QueueState" },
+      "description": "실시간 대기열 번호표 상태"
+    },
+    "/app_state/{stateId}": {
+      "schema": { "$ref": "#/entities/AppState" },
+      "description": "현재 활성화된 축제 ID"
+    }
+  }
+}

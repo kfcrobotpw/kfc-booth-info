@@ -29,8 +29,17 @@ export const FestivalsCalendar: React.FC<FestivalsCalendarProps> = ({
       </div>
 
       {/* Festival Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {festivals.map(fest => {
+      {festivals.length === 0 ? (
+        <div className="text-center py-16 rounded-2xl bg-slate-900/50 border border-dashed border-slate-800 p-8 space-y-3">
+          <Calendar className="w-12 h-12 text-slate-500 mx-auto" />
+          <h3 className="text-base font-bold text-white">등록된 축제 일정이 없습니다</h3>
+          <p className="text-xs text-slate-400">
+            예정된 공식 축제 일정이 공지되면 이곳에 표시됩니다.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {festivals.map(fest => {
           const isActive = fest.id === activeFestivalId;
 
           return (
@@ -105,6 +114,7 @@ export const FestivalsCalendar: React.FC<FestivalsCalendarProps> = ({
           );
         })}
       </div>
+      )}
     </div>
   );
 };
