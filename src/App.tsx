@@ -138,14 +138,18 @@ export default function App() {
         path === '/admin/' ||
         path.endsWith('/admin') ||
         path.endsWith('/admin/') ||
+        path.includes('/admin') ||
         hash === '#admin' ||
-        hash === '#/admin';
+        hash === '#/admin' ||
+        hash.includes('admin');
 
       if (isAdminUrl) {
         if (checkIsAdmin()) {
           setIsAdmin(true);
           setIsAdminView(true);
+          setIsLoginModalOpen(false);
         } else {
+          setIsAdminView(false);
           setIsLoginModalOpen(true);
         }
       } else {
@@ -485,14 +489,18 @@ export default function App() {
 
   const handleExitAdmin = () => {
     setIsAdminView(false);
+    setIsLoginModalOpen(false);
     window.history.pushState(null, '', '/');
+    window.dispatchEvent(new Event('popstate'));
   };
 
   const handleLogoutAdmin = () => {
     setAdminAuth(false);
     setIsAdmin(false);
     setIsAdminView(false);
+    setIsLoginModalOpen(false);
     window.history.pushState(null, '', '/');
+    window.dispatchEvent(new Event('popstate'));
   };
 
   // If in Admin Mode, show the Admin Dashboard
@@ -547,6 +555,7 @@ export default function App() {
           onClose={() => {
             setIsLoginModalOpen(false);
             window.history.pushState(null, '', '/');
+            window.dispatchEvent(new Event('popstate'));
           }}
           onSuccess={handleLoginSuccess}
         />
@@ -633,7 +642,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
             <div className="font-bold text-slate-300">
-              용인시청소년수련관 소속 로봇동아리 K.F.C. (Korea Fantastic Creators)
+              용인시청소년수련관 소속 로봇동아리 K.F.C. (Korea Fun Club)
             </div>
             <div className="text-[11px] text-slate-500 mt-0.5">
               청소년 메이커스 & 로보틱스 엔지니어링 동아리 부스 운영 관제 시스템
@@ -656,6 +665,7 @@ export default function App() {
         onClose={() => {
           setIsLoginModalOpen(false);
           window.history.pushState(null, '', '/');
+          window.dispatchEvent(new Event('popstate'));
         }}
         onSuccess={handleLoginSuccess}
       />

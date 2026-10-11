@@ -2,25 +2,30 @@ import { Festival, Member, Robot, WebAppIdea, RobotDeploymentRequest, WebAppIdea
 import { INITIAL_FESTIVALS, INITIAL_MEMBERS, INITIAL_ROBOTS, INITIAL_WEB_APPS } from '../data/defaultData';
 
 const STORAGE_KEYS = {
-  FESTIVALS: 'kfc_robotics_festivals_prod_v4',
-  ACTIVE_FESTIVAL_ID: 'kfc_robotics_active_festival_id_prod_v4',
-  MEMBERS: 'kfc_robotics_members_prod_v4',
-  ROBOTS: 'kfc_robotics_robots_prod_v4',
-  WEB_APPS: 'kfc_robotics_webapps_prod_v4',
-  ADMIN_AUTH: 'kfc_robotics_admin_auth_prod_v4',
-  ADMIN_VAULT: 'kfc_robotics_admin_vault_prod_v4',
-  OPERATOR_CODE: 'kfc_robotics_operator_code_prod_v4',
-  ROBOT_REQUESTS: 'kfc_robotics_robot_requests_prod_v4',
-  WEBAPP_REQUESTS: 'kfc_robotics_webapp_requests_prod_v4',
+  FESTIVALS: 'kfc_club_festivals_v5',
+  ACTIVE_FESTIVAL_ID: 'kfc_club_active_festival_id_v5',
+  MEMBERS: 'kfc_club_members_v5',
+  ROBOTS: 'kfc_club_robots_v5',
+  WEB_APPS: 'kfc_club_webapps_v5',
+  ADMIN_AUTH: 'kfc_club_admin_auth_v5',
+  ADMIN_VAULT: 'kfc_club_admin_vault_v5',
+  OPERATOR_CODE: 'kfc_club_operator_code_v5',
+  ROBOT_REQUESTS: 'kfc_club_robot_requests_v5',
+  WEBAPP_REQUESTS: 'kfc_club_webapp_requests_v5',
 };
 
-// Purge any stale test keys from previous versions
+// Purge any stale test/demo keys from previous test sessions to ensure clean initialization
 try {
-  const staleKeywords = ['_clean_v2', '_clean'];
+  const staleKeywords = ['_clean_v2', '_clean', '_prod_v4', 'kfc_robotics_'];
   const keysToRemove: string[] = [];
   for (let i = 0; i < localStorage.length; i++) {
     const k = localStorage.key(i);
     if (k && staleKeywords.some(w => k.includes(w))) {
+      // Preserve custom admin password if set
+      if (k.includes('admin_vault') && !localStorage.getItem(STORAGE_KEYS.ADMIN_VAULT)) {
+        const val = localStorage.getItem(k);
+        if (val) localStorage.setItem(STORAGE_KEYS.ADMIN_VAULT, val);
+      }
       keysToRemove.push(k);
     }
   }
@@ -112,14 +117,22 @@ export interface AdminCredentials {
   updatedAt?: string;
 }
 
-export const getStoredAdminCredentials = (): AdminCredentials | null => {
+export const getStoredAdminCredentials = (): AdminCredentials => {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.ADMIN_VAULT);
-    if (!raw) return null;
-    return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.adminId) return parsed;
+    }
   } catch {
-    return null;
+    // Ignore
   }
+  // Default admin credentials: admin / admin (SHA-256)
+  return {
+    adminId: 'admin',
+    passwordHash: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+    isConfigured: false,
+  };
 };
 
 export const saveAdminCredentials = (adminId: string, passwordHash: string): void => {
@@ -138,20 +151,6 @@ export const saveAdminCredentials = (adminId: string, passwordHash: string): voi
   }
 };
 
-// Purge any old legacy keys with dummy examples if present
-try {
-  const legacyKeys = [
-    'kfc_robotics_festivals_v1',
-    'kfc_robotics_active_festival_id_v1',
-    'kfc_robotics_members_v1',
-    'kfc_robotics_robots_v1',
-    'kfc_robotics_webapps_v1',
-  ];
-  legacyKeys.forEach(k => localStorage.removeItem(k));
-} catch {
-  // Ignore in restricted environments
-}
-
 export const loadFestivals = (): Festival[] => {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.FESTIVALS);
@@ -160,7 +159,7 @@ export const loadFestivals = (): Festival[] => {
       return INITIAL_FESTIVALS;
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0]?.date) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     localStorage.setItem(STORAGE_KEYS.FESTIVALS, JSON.stringify(INITIAL_FESTIVALS));
     return INITIAL_FESTIVALS;
   } catch {

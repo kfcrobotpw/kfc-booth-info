@@ -62,7 +62,7 @@ export const OperatorFullScreenLogin: React.FC<OperatorFullScreenLoginProps> = (
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-gradient-to-b from-indigo-900/30 via-cyan-900/10 to-transparent blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[300px] bg-blue-900/15 blur-3xl pointer-events-none" />
 
-      {/* Top Bar: Clean and minimal (No '보안 관제 구역' badge) */}
+      {/* Top Bar: Clean and minimal */}
       <header className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
         <div 
           onClick={handleHeaderSecretClick}
@@ -74,11 +74,11 @@ export const OperatorFullScreenLogin: React.FC<OperatorFullScreenLoginProps> = (
           </div>
           <div>
             <div className="text-xs font-bold text-indigo-400 tracking-wider">용인시청소년수련관 로봇동아리</div>
-            <div className="text-base font-black tracking-tight text-white">K.F.C. (Korea Fantastic Creators)</div>
+            <div className="text-base font-black tracking-tight text-white">K.F.C. (Korea Fun Club)</div>
           </div>
         </div>
 
-        {/* Empty right area without any security badge */}
+        {/* Empty right area */}
         <div />
       </header>
 
@@ -157,7 +157,7 @@ export const OperatorFullScreenLogin: React.FC<OperatorFullScreenLoginProps> = (
       {/* Footer */}
       <footer className="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-slate-500">
         <p>
-          용인시청소년수련관 소속 로봇동아리 K.F.C. &bull; Korea Fantastic Creators Booth Operation Control
+          용인시청소년수련관 소속 로봇동아리 K.F.C. &bull; Korea Fun Club Booth Operation Control
         </p>
         <p className="text-[11px] text-slate-600 mt-1">
           * 비인가 접근 시도가 제한되며, 발급된 고유 코드는 타인에게 양도할 수 없습니다.

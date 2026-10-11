@@ -218,18 +218,16 @@ export const AdminRobots: React.FC<AdminRobotsProps> = ({
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                   </button>
-                  {robots.length > 1 && (
-                    <button
-                      onClick={() => {
-                        if (confirm(`'${robot.name}'을 삭제하시겠습니까?`)) {
-                          onDeleteRobot(robot.id);
-                        }
-                      }}
-                      className="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 transition"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => {
+                      if (confirm(`'${robot.name}'을 삭제하시겠습니까?`)) {
+                        onDeleteRobot(robot.id);
+                      }
+                    }}
+                    className="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               </div>
             </div>

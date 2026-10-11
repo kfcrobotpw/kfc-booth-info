@@ -264,18 +264,16 @@ export const AdminMembers: React.FC<AdminMembersProps> = ({
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
-                    {members.length > 1 && (
-                      <button
-                        onClick={() => {
-                          if (confirm(`${member.name} 부원을 삭제하시겠습니까?`)) {
-                            onDeleteMember(member.id);
-                          }
-                        }}
-                        className="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs transition"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => {
+                        if (confirm(`${member.name} 부원을 삭제하시겠습니까?`)) {
+                          onDeleteMember(member.id);
+                        }
+                      }}
+                      className="p-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs transition"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
 
